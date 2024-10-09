@@ -20,3 +20,8 @@ spring:
   output:
     ansi:
       enabled: always
+
+jwt:
+  secret-key: ba223661e3ddf6a551e8a586e221069222f41c702923ce8f0b2bd313ac97c9884ae78275e3c571767d50fbfbb16f6aaaaa
+  access-expire-time: 600000 # 10분
+  refresh-expire-time: 86400000 # 1일
