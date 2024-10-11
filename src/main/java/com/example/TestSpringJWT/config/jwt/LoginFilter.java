@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 @Slf4j
+@RequiredArgsConstructor
 public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
@@ -24,11 +25,11 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     // JWTUtil 객체 주입
     private final JWTUtil jwtUtil;
 
-    public LoginFilter(AuthenticationManager authenticationManager, JWTUtil jwtUtil) {
-
-        this.authenticationManager = authenticationManager;
-        this.jwtUtil = jwtUtil;
-    }
+//    public LoginFilter(AuthenticationManager authenticationManager, JWTUtil jwtUtil) {
+//
+//        this.authenticationManager = authenticationManager;
+//        this.jwtUtil = jwtUtil;
+//    }
 
     // 로그인 시도시에 실행되는 메소드
     @Override

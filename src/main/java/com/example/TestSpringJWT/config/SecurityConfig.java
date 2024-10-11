@@ -1,5 +1,6 @@
 package com.example.TestSpringJWT.config;
 
+import com.example.TestSpringJWT.config.jwt.JWTFilter;
 import com.example.TestSpringJWT.config.jwt.JWTUtil;
 import com.example.TestSpringJWT.config.jwt.LoginFilter;
 import lombok.RequiredArgsConstructor;
@@ -67,6 +68,13 @@ public class SecurityConfig {
                         .requestMatchers("/", "/login", "join").permitAll()
                         .requestMatchers("/admin").hasRole("ADMIN")
                         .anyRequest().authenticated()
+                );
+
+        // JWTFilter 등록
+        http
+                .addFilterBefore(
+                        new JWTFilter(jwtUtil),
+                        LoginFilter.class
                 );
 
         http
