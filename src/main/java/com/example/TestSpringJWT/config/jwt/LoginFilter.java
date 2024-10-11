@@ -1,5 +1,6 @@
 package com.example.TestSpringJWT.config.jwt;
 
+import com.example.TestSpringJWT.dto.CustomUserDetails;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -9,13 +10,25 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import java.util.Collection;
+import java.util.Iterator;
+
 @Slf4j
-@RequiredArgsConstructor
 public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
+
+    // JWTUtil 객체 주입
+    private final JWTUtil jwtUtil;
+
+    public LoginFilter(AuthenticationManager authenticationManager, JWTUtil jwtUtil) {
+
+        this.authenticationManager = authenticationManager;
+        this.jwtUtil = jwtUtil;
+    }
 
     // 로그인 시도시에 실행되는 메소드
     @Override
@@ -46,6 +59,20 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
             FilterChain chain,
             Authentication authentication) {
 
+        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+
+        String username = customUserDetails.getUsername();
+
+        Collection<? extends GrantedAuthority> authorities = customUserDetails.getAuthorities();
+        Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
+        GrantedAuthority authority = iterator.next();
+
+        String role = authority.getAuthority();
+
+        String jwt = jwtUtil.createJwt(username, role, 60 * 60 * 10L); // 10분
+
+        response.addHeader("Authorization", "Bearer " + jwt);
+
         log.info("로그인 성공");
     }
 
@@ -55,6 +82,8 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
             HttpServletRequest request,
             HttpServletResponse response,
             AuthenticationException failed) {
+
+        response.setStatus(401);
 
         log.info("로그인 실패");
     }

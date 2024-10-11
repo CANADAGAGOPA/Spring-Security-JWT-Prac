@@ -1,5 +1,6 @@
 package com.example.TestSpringJWT.config;
 
+import com.example.TestSpringJWT.config.jwt.JWTUtil;
 import com.example.TestSpringJWT.config.jwt.LoginFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -23,9 +24,13 @@ public class SecurityConfig {
     //AuthenticationManager 가 인자로 받을 AuthenticationConfiguration 객체 생성자 주입
     private final AuthenticationConfiguration authenticationConfiguration;
 
-    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration) {
+    // JWTUtil 객체 주입
+    private final JWTUtil jwtUtil;
+
+    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration, JWTUtil jwtUtil) {
 
         this.authenticationConfiguration = authenticationConfiguration;
+        this.jwtUtil = jwtUtil;
     }
 
     @Bean
@@ -66,7 +71,7 @@ public class SecurityConfig {
 
         http
                 .addFilterAt(
-                        new LoginFilter(authenticationManager(authenticationConfiguration)),
+                        new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil),
                         UsernamePasswordAuthenticationFilter.class
                 );
 
